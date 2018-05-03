@@ -55,5 +55,7 @@ module.exports.routes = {
   //  ║║║║╚═╗║
   //  ╩ ╩╩╚═╝╚═╝
 
+  'GET /email/receive': 'EmailController.receive',
+
 
 };
