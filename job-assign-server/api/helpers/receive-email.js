@@ -26,8 +26,8 @@ module.exports = {
             inspect = require('util').inspect;
 
         var imap = new Imap({
-            user: 'yin.gong.reg@gmail.com',
-            password: '1266Mg96',
+            user: '',
+            password: '',
             host: 'imap.gmail.com',
             port: 993,
             tls: true
