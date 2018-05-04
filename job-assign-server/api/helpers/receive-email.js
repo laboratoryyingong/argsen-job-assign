@@ -26,12 +26,14 @@ module.exports = {
             inspect = require('util').inspect;
 
         var imap = new Imap({
-            user: '',
-            password: '',
+            user: 'yin.gong.reg@gmail.com',
+            password: '1266Mg96',
             host: 'imap.gmail.com',
             port: 993,
             tls: true
         });
+
+        var getStream = require('get-stream');
 
         function openInbox(cb) {
             imap.openBox('INBOX', true, cb);
@@ -41,41 +43,33 @@ module.exports = {
 
             openInbox(function (err, box) {
                 if (err) throw err;
-                var f = imap.seq.fetch('1:4', {
-                    bodies: 'HEADER.FIELDS (FROM TO SUBJECT DATE)',
-                    struct: true
-                });
-                var returnArr = [];
-                f.on('message', function (msg, seqno) {
-                    console.log('Message #%d', seqno);
+                imap.search(['UNSEEN', ['SINCE', 'May 20, 2017']], function (err, results) {
+                    if (err) throw err;
+                    var f = imap.fetch(results, { bodies: '' });
                     var returnObj = [];
-                    var prefix = '(#' + seqno + ') ';
-                    msg.on('body', function (stream, info) {
-                        var buffer = '';
-                        stream.on('data', function (chunk) {
-                            buffer += chunk.toString('utf8');
-                            console.log(buffer)
+                    f.on('message', function (msg, seqno) {
+                        console.log('Message #%d', seqno);
+                        var prefix = '(#' + seqno + ') ';
+                        var messageObj = [];
+                        msg.on('body', function (stream, info) {
+                            console.log(prefix + 'Body');
+                            messageObj.push(info);
                         });
-                        stream.once('end', function () {
-                            returnObj.push(inspect(Imap.parseHeader(buffer)));
-                            console.log(prefix + 'Parsed header: %s', inspect(Imap.parseHeader(buffer)));
+                        msg.once('end', function () {
+                            returnObj.push(messageObj);
+                            console.log(prefix + 'Finished');
                         });
                     });
-                    msg.once('attributes', function (attrs) {
-                        console.log(prefix + 'Attributes: %s', inspect(attrs, false, 8));
+                    f.once('error', function (err) {
+                        console.log('Fetch error: ' + err);
                     });
-                    msg.once('end', function () {
-                        returnArr.push(returnObj);
-                        console.log(prefix + 'Finished');
+                    f.once('end', function () {
+                        
+                        console.log('Done fetching all messages!');
+                        imap.end();
+
+                        return exits.success(returnObj);
                     });
-                });
-                f.once('error', function (err) {
-                    console.log('Fetch error: ' + err);
-                });
-                f.once('end', function () {
-                    return exits.success(returnArr);
-                    console.log('Done fetching all messages!');
-                    imap.end();
                 });
             });
 
@@ -91,8 +85,6 @@ module.exports = {
 
         imap.connect();
 
-
-        
     }
 
 };
