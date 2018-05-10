@@ -11,6 +11,10 @@ module.exports = {
 
     _config: {},
 
+    homepage: function (req, res){
+        return res.view('pages/homepage');
+    },
+
     authorise: async function (req, res) {
 
         //Get auth code

@@ -23,8 +23,12 @@ module.exports.routes = {
   * `assets` directory)                                                      *
   *                                                                          *
   ***************************************************************************/
+  '/': {
+    controller: 'pages',
+    action: 'homepage'
+  },
 
-  'GET /authorise': {
+  '/authorise': {
     controller: 'pages',
     action: 'authorise'
   },
@@ -57,7 +61,8 @@ module.exports.routes = {
   //  ╩ ╩╩╚═╝╚═╝
 
   'GET /email/receive': 'EmailController.receive',
-  'GET /auth/getcode': 'AuthController.getCode',
+  'GET /auth/get': 'AuthController.getCode',
+  'GET /auth//refreshToken': 'AuthController.refreshToken',
 
 
 };

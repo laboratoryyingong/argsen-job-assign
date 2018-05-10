@@ -19,6 +19,7 @@ const credentials = {
     }
 };
 const oauth2 = require('simple-oauth2').create(credentials);
+const fs = require('fs');
 
 module.exports = {
 
@@ -28,9 +29,31 @@ module.exports = {
             scope: process.env.APP_SCOPES
         });
 
-        return res.json(returnVal);
+        return res.redirect(returnVal);
 
     },
+
+    refreshToken: function (req, res){
+
+        //Get current token
+        let token = null;
+
+        fs.readFile('./token.json', 'utf8', async function (err, data) {
+            token = JSON.parse(data);
+            let newToken = await sails.helpers.refreshToken.with({token: token});
+
+            if(newToken){
+                let json = JSON.stringify(newToken);
+                fs.writeFile('./token.json', json, 'utf8', function(){
+                    return res.json({'is_refresh': true});
+                });
+            }else{
+                return res.json({'is_refresh': false});
+            }
+
+        });
+
+    }
 
 };
 
