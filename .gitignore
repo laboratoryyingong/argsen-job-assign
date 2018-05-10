@@ -4,3 +4,5 @@ job-assign-server/\.env
 job-assign-server/api/helpers/receive-email\.js
 
 job-assign-server/token\.json
+
+argsen-job-assign-info\.txt

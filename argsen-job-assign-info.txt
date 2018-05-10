@@ -1,8 +1,0 @@
-email:contact@argsen.onmicrosoft.com
-password:2o17Test
-
-Application Info:
-
-Name: argsen-job-assign
-Application Id: 532201d3-2a59-4e9f-9026-7b1ea89a285a
-Password: ffbqVRJ78-*kgxAICB525!*
