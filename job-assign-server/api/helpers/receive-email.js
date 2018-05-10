@@ -12,7 +12,7 @@ module.exports = {
             type: 'string',
             example: 'May 20, 2010',
             description: 'receive email since May 20, 2010',
-            required:true
+            required: true
         }
 
 
@@ -35,25 +35,27 @@ module.exports = {
 
         var getStream = require('get-stream');
 
-        function openInbox(cb) {
-            imap.openBox('INBOX', true, cb);
-        }
-
         imap.once('ready', function () {
-
-            openInbox(function (err, box) {
-                if (err) throw err;
+            imap.openBox('INBOX', true, function () {
                 imap.search(['UNSEEN', ['SINCE', 'May 20, 2017']], function (err, results) {
                     if (err) throw err;
-                    var f = imap.fetch(results, { bodies: '' });
+                    var f = imap.fetch(results, {
+                        bodies: 'TEXT',
+                        struct: true
+                    });
+
                     var returnObj = [];
                     f.on('message', function (msg, seqno) {
                         console.log('Message #%d', seqno);
                         var prefix = '(#' + seqno + ') ';
                         var messageObj = [];
+
                         msg.on('body', function (stream, info) {
                             console.log(prefix + 'Body');
-                            messageObj.push(info);
+                            getStream(stream).then((str) => {
+                                console.log(str);
+                            });
+                            
                         });
                         msg.once('end', function () {
                             returnObj.push(messageObj);
@@ -64,15 +66,13 @@ module.exports = {
                         console.log('Fetch error: ' + err);
                     });
                     f.once('end', function () {
-                        
+
                         console.log('Done fetching all messages!');
                         imap.end();
-
                         return exits.success(returnObj);
                     });
                 });
             });
-
         });
 
         imap.once('error', function (err) {
