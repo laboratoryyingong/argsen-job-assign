@@ -14,10 +14,8 @@ module.exports = {
     },
 
     receive: async function (req, res) {
-
-        var greeting = await sails.helpers.receiveEmail('max');
+        const greeting = await sails.helpers.receiveEmail('max');
         return res.json(greeting);
-
     }
 
 

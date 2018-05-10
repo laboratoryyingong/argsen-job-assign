@@ -9,13 +9,15 @@
     "@sailshq/lodash": "^3.10.3",
     "@sailshq/socket.io-redis": "^5.2.0",
     "async": "2.0.1",
+    "dotenv": "^5.0.1",
     "get-stream": "^3.0.0",
     "grunt": "1.0.1",
     "imap": "^0.8.19",
     "sails": "^1.0.1",
     "sails-hook-grunt": "^3.0.2",
     "sails-hook-orm": "^2.0.0-16",
-    "sails-hook-sockets": "^1.4.0"
+    "sails-hook-sockets": "^1.4.0",
+    "simple-oauth2": "^1.5.2"
   },
   "devDependencies": {
     "@sailshq/eslint": "^4.19.3"

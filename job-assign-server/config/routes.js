@@ -24,8 +24,9 @@ module.exports.routes = {
   *                                                                          *
   ***************************************************************************/
 
-  '/': {
-    view: 'pages/homepage'
+  'GET /authorise': {
+    controller: 'pages',
+    action: 'authorise'
   },
 
   /***************************************************************************
@@ -56,6 +57,7 @@ module.exports.routes = {
   //  ╩ ╩╩╚═╝╚═╝
 
   'GET /email/receive': 'EmailController.receive',
+  'GET /auth/getcode': 'AuthController.getCode',
 
 
 };
