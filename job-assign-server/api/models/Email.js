@@ -9,6 +9,31 @@ module.exports = {
 
   attributes: {
 
+    emailId: {
+      type: 'string',
+    },
+
+    receivedDateTime: {
+      type: 'string',
+    },
+
+    subject:{
+      type: 'string',
+    },
+
+    isRead:{
+      type: 'boolean',
+    },
+
+    body:{
+      type: 'ref',
+    },
+
+    from:{
+      type:'ref',
+    },
+
+
     //  ╔═╗╦═╗╦╔╦╗╦╔╦╗╦╦  ╦╔═╗╔═╗
     //  ╠═╝╠╦╝║║║║║ ║ ║╚╗╔╝║╣ ╚═╗
     //  ╩  ╩╚═╩╩ ╩╩ ╩ ╩ ╚╝ ╚═╝╚═╝

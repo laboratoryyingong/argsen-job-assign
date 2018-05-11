@@ -32,32 +32,12 @@ module.exports = {
             redirect_uri: process.env.REDIRECT_URI,
             scope: process.env.APP_SCOPES
         });
-
         return res.redirect(returnVal);
-
     },
 
     refreshToken: async function (req, res){
-
-        let token = null;
-        let data = await readFile('./token.json', 'utf8'); //Get current token
-        token = JSON.parse(data);
-        let newToken = await sails.helpers.refreshToken.with({ token: token });
-
-        if (newToken) {
-            let json = JSON.stringify(newToken);
-            await writeFile('./token.json', json, 'utf8');
-            return res.json({
-                'is_refresh': true,
-                'message': 'new token has been exchanged,thanks!'
-            });
-        } else {
-            return res.json({
-                'is_refresh': false,
-                'message': 'current token has not expired, will continue use.'
-            });
-        }
-
+        let returnObj = await sails.helpers.refreshToken();
+        return res.json(returnObj);
     }
 
 };

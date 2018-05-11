@@ -61,6 +61,8 @@ module.exports.routes = {
   //  ╩ ╩╩╚═╝╚═╝
 
   'GET /email/receive': 'EmailController.receive',
+  'GET /email/reveiveArgsen': 'EmailController.reveiveArgsen',
+  
   'GET /auth/get': 'AuthController.getCode',
   'GET /auth/refreshToken': 'AuthController.refreshToken',
 
