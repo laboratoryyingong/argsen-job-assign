@@ -6,6 +6,8 @@
  */
 
 const fs = require('fs');
+const util = require('util');   
+const writeFile = util.promisify(fs.writeFile);
 
 module.exports = {
 
@@ -24,9 +26,8 @@ module.exports = {
             let token = await sails.helpers.auth.with({ auth_code: auth_code });
             //save token to json file, use access_token to login & use refresh_token to exchange token;
             let json = JSON.stringify(token);
-            fs.writeFile('./token.json', json, 'utf8', function(){
-                return res.view('pages/authorise');
-            });
+            await writeFile('./token.json', json, 'utf8');
+            return res.view('pages/authorise');
         
         }
 

@@ -20,6 +20,10 @@ const credentials = {
 };
 const oauth2 = require('simple-oauth2').create(credentials);
 const fs = require('fs');
+const jwt = require('jsonwebtoken');
+const util = require('util');   
+const readFile = util.promisify(fs.readFile);
+const writeFile = util.promisify(fs.writeFile);
 
 module.exports = {
 
@@ -33,25 +37,26 @@ module.exports = {
 
     },
 
-    refreshToken: function (req, res){
+    refreshToken: async function (req, res){
 
-        //Get current token
         let token = null;
+        let data = await readFile('./token.json', 'utf8'); //Get current token
+        token = JSON.parse(data);
+        let newToken = await sails.helpers.refreshToken.with({ token: token });
 
-        fs.readFile('./token.json', 'utf8', async function (err, data) {
-            token = JSON.parse(data);
-            let newToken = await sails.helpers.refreshToken.with({token: token});
-
-            if(newToken){
-                let json = JSON.stringify(newToken);
-                fs.writeFile('./token.json', json, 'utf8', function(){
-                    return res.json({'is_refresh': true});
-                });
-            }else{
-                return res.json({'is_refresh': false});
-            }
-
-        });
+        if (newToken) {
+            let json = JSON.stringify(newToken);
+            await writeFile('./token.json', json, 'utf8');
+            return res.json({
+                'is_refresh': true,
+                'message': 'new token has been exchanged,thanks!'
+            });
+        } else {
+            return res.json({
+                'is_refresh': false,
+                'message': 'current token has not expired, will continue use.'
+            });
+        }
 
     }
 

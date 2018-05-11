@@ -6,3 +6,5 @@ job-assign-server/api/helpers/receive-email\.js
 job-assign-server/token\.json
 
 argsen-job-assign-info\.txt
+
+job-assign-server/package-lock\.json

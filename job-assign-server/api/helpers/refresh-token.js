@@ -11,6 +11,7 @@ const credentials = {
     }
 };
 const oauth2 = require('simple-oauth2').create(credentials);
+const jwt = require('jsonwebtoken');
 
 module.exports = {
 

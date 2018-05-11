@@ -5,6 +5,8 @@
  * @help        :: See https://sailsjs.com/docs/concepts/actions
  */
 
+const graph = require('@microsoft/microsoft-graph-client');
+
 module.exports = {
 
     _config: {
@@ -16,6 +18,10 @@ module.exports = {
     receive: async function (req, res) {
         const greeting = await sails.helpers.receiveEmail('max');
         return res.json(greeting);
+    },
+
+    reveiveArgsen: async function (req, res){
+        //todo:
     }
 
 
