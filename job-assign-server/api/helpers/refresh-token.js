@@ -70,7 +70,7 @@ module.exports = {
     }
 
     if (is_new) {
-      await writeFile('./token.json', JSON.stringify(newToken), 'utf8');
+      await writeFile('./token.json', JSON.stringify(newToken.token), 'utf8');
       return exits.success({
         'is_refresh': true,
         'message': 'new token has been exchanged,thanks!',
