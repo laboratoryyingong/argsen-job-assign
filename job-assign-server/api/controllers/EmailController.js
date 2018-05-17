@@ -16,35 +16,33 @@ module.exports = {
         rest: false
     },
 
-    receive: async function (req, res) {
-        const greeting = await sails.helpers.receiveEmail('max');
-        return res.json(greeting);
-    },
-
-    reveiveArgsen: async function (req, res) {
-        const returnObj = await sails.helpers.refreshToken();
-        const token = returnObj['token'];
+    receiveEmail: async function (req, res) {
+        let returnObj = await sails.helpers.refreshToken();
+        let token = returnObj['token'];
 
         // let parms = { title: 'Inbox', active: { inbox: true } };
-        const accessToken = token.access_token;
-        const userName = jwt.decode(token.id_token);
+        let accessToken = token.access_token;
+        let userName = jwt.decode(token.id_token);
 
         if (accessToken && userName) {
 
             // Initialize Graph client
-            const client = graph.Client.init({
+            let client = graph.Client.init({
                 authProvider: (done) => {
                     done(null, accessToken);
                 }
             });
 
+            // get startDateTime five days ago  
+            startDateTime = formatDate(new Date() - 5*24*60*60*1000); 
+
             // Get the latest newest messages from inbox
-            const result = await client
+            let result = await client
                 .api('/me/mailfolders/inbox/messages')
-                .top(5)
                 // .select('subject,from,receivedDateTime,isRead')
                 .select('subject,from,receivedDateTime,isRead,body')
                 .orderby('receivedDateTime DESC')
+                .filter("receivedDateTime ge " + startDateTime)
                 .get();
 
             for (let i in result['value']) {
@@ -67,6 +65,18 @@ module.exports = {
                     });
             }
 
+            function formatDate(unix_timestamp) {
+                var d = new Date(unix_timestamp),
+                    month = '' + (d.getMonth() + 1),
+                    day = '' + d.getDate(),
+                    year = d.getFullYear();
+
+                if (month.length < 2) month = '0' + month;
+                if (day.length < 2) day = '0' + day;
+
+                return [year, month, day].join('-');
+            }
+
             
 
         } 
@@ -74,6 +84,36 @@ module.exports = {
         return res.ok();
 
     },
+
+    getEmail: async function (req, res) {
+
+        //build up a pagination system
+        const limit = parseInt(req.query.limit) || 10;
+        const skip = parseInt(req.query.skip) || 0;
+
+        let email = await Email.find({
+            select: ['from','subject','receivedDateTime', 'isRead'],
+            limit: limit, 
+            skip: skip
+        });
+
+        return res.json(email);
+
+    },
+
+    getEmailContentById: async function (req, res){
+
+        const id = req.query.id;
+
+        let emailConent = await Email.find({ 
+            where: { id: id },
+            select: ['body'],
+        })
+
+        return res.json(emailConent);
+    }
+
+
 
 };
 

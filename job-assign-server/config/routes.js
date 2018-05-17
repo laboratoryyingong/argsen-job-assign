@@ -25,7 +25,7 @@ module.exports.routes = {
   ***************************************************************************/
   '/': {
     controller: 'pages',
-    action: 'homepage'
+    action: 'main'
   },
 
   '/authorise': {
@@ -60,8 +60,9 @@ module.exports.routes = {
   //  ║║║║╚═╗║
   //  ╩ ╩╩╚═╝╚═╝
 
-  'GET /email/receive': 'EmailController.receive',
-  'GET /email/reveiveArgsen': 'EmailController.reveiveArgsen',
+  'GET /email/receive': 'EmailController.receiveEmail',
+  'GET /email/get': 'EmailController.getEmail',
+  'GET /email/getContent': 'EmailController.getEmailContentById',
   
   'GET /auth/get': 'AuthController.getCode',
   'GET /auth/refreshToken': 'AuthController.refreshToken',

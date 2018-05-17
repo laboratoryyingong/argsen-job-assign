@@ -33,6 +33,10 @@
 //
 var cssFilesToInject = [
 
+  //bring skeleton css
+  'components/skeleton/**/*.css',
+  'components/font-awesome/web-fonts-with-css/css/fontawesome-all.min.css',
+
   // Bring in `.css` files for themes and style guides (e.g. Bootstrap, Foundation)
   'dependencies/**/*.css',
 
@@ -68,6 +72,9 @@ var jsFilesToInject = [
   // (e.g. Lodash, Vue.js, jQuery, Bootstrap, Ember, Angular, etc.)
   // > Be sure to list dependencies that depend on each other in the right order!
   'dependencies/**/*.js',
+  'components/jquery/dist/jquery.min.js',
+  'components/jquery-migrate/jquery-migrate.min.js',
+  'components/twbs-pagination/jquery.twbsPagination.min.js',
 
   // All of the rest of your custom client-side js files will be injected here,
   // in no particular order.  To customize the ordering, add additional items

@@ -8,3 +8,5 @@ job-assign-server/token\.json
 argsen-job-assign-info\.txt
 
 job-assign-server/package-lock\.json
+
+job-assign-server/assets/components/

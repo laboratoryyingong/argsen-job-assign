@@ -32,6 +32,11 @@ module.exports = {
         }
 
     },
+
+    main: function (req, res){
+        res.view('pages/main', {layout: 'layouts/layout'})
+    },
+
   
 
 };
