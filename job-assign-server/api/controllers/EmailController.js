@@ -41,7 +41,7 @@ module.exports = {
             // Get the latest newest messages from inbox
             const result = await client
                 .api('/me/mailfolders/inbox/messages')
-                .top(3)
+                .top(5)
                 // .select('subject,from,receivedDateTime,isRead')
                 .select('subject,from,receivedDateTime,isRead,body')
                 .orderby('receivedDateTime DESC')
