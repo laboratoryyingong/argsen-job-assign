@@ -63,6 +63,7 @@ module.exports.routes = {
   'GET /email/receive': 'EmailController.receiveEmail',
   'GET /email/get': 'EmailController.getEmail',
   'GET /email/getContent': 'EmailController.getEmailContentById',
+  'GET /email/getAttachments': 'EmailController.getAttachmentById',
   
   'GET /auth/get': 'AuthController.getCode',
   'GET /auth/refreshToken': 'AuthController.refreshToken',

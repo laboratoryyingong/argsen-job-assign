@@ -92,10 +92,10 @@ module.exports = {
         const skip = parseInt(req.query.skip) || 0;
 
         let email = await Email.find({
-            select: ['from','subject','receivedDateTime', 'isRead'],
+            select: ['from','subject','receivedDateTime', 'isRead','emailId'],
             limit: limit, 
             skip: skip
-        });
+        }).sort('receivedDateTime DESC');
 
         return res.json(email);
 
@@ -103,16 +103,58 @@ module.exports = {
 
     getEmailContentById: async function (req, res){
 
-        const id = req.query.id;
+        const emailId = req.query.emailId;
 
         let emailConent = await Email.find({ 
-            where: { id: id },
-            select: ['body'],
-        })
+            where: { emailId: emailId },
+            select: ['body','emailId','from'],
+        });
 
         return res.json(emailConent);
-    }
+    },
 
+    getAttachmentById: async function (req, res){
+        const emailId = req.query.emailId;
+
+        let returnObj = await sails.helpers.refreshToken();
+        let token = returnObj['token'];
+
+        let accessToken = token.access_token;
+        let userName = jwt.decode(token.id_token);
+
+        if (accessToken && userName) {
+
+            // Initialize Graph client
+            let client = graph.Client.init({
+                authProvider: (done) => {
+                    done(null, accessToken);
+                }
+            });
+
+            let attachments = await client
+                .api('/me/messages/' + emailId + '/attachments/')
+                .get();
+            
+            let attachmentList = [];
+            for(let i in attachments['value']){
+                let name = attachments['value'][i]['name'];
+                let size = attachments['value'][i]['size'];
+                let contentId =  attachments['value'][i]['contentId'];
+
+                let temp = {
+                    name:name,
+                    size: size,
+                    contentId:contentId
+                }
+
+                attachmentList.push(temp);
+            }
+
+            return res.json(attachmentList);
+
+        } 
+
+    }
 
 
 };
