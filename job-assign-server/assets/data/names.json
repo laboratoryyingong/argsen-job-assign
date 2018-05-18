@@ -1,0 +1,21 @@
+[{
+    "value": "test1@gmail.com",
+    "text": "Jing Gao",
+    "group": "dev"
+  },
+  {
+    "value": "test2@gmail.com",
+    "text": "Ken Cen",
+    "group": "dev"
+  },
+  {
+    "value": "test3@gmail.com",
+    "text": "Harry Cui",
+    "group": "dev"
+  },
+  {
+    "value": "test4@gmail.com",
+    "text": "Max Gong",
+    "group": "dev"
+  }
+]

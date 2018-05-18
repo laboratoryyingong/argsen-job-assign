@@ -71,21 +71,21 @@ function createAttachmentView(elem) {
   console.log(emailId)
 }
 
-var cities = new Bloodhound({
+var names = new Bloodhound({
   datumTokenizer: Bloodhound.tokenizers.obj.whitespace('text'),
   queryTokenizer: Bloodhound.tokenizers.whitespace,
-  prefetch: 'data/cities.json'
+  prefetch: 'data/names.json'
 });
-cities.initialize();
+names.initialize();
 
 var elt = $('#consumer');
 elt.tagsinput({
   itemValue: 'value',
-  itemText: 'text',
+  itemText: 'value',
   typeaheadjs: {
-    name: 'cities',
+    name: 'names',
     displayKey: 'text',
-    source: cities.ttAdapter()
+    source: names.ttAdapter()
   }
 });
 
