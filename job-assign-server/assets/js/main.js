@@ -1,4 +1,6 @@
-$(function () {
+var globalEmailId = '';
+
+(function ($) {
 
   $('#pagination-demo').twbsPagination({
     totalPages: 10,
@@ -30,7 +32,7 @@ $(function () {
             var td = '<td>' + subject + '</td>' +
               '<td>' + receivedDateTime + '</td>' +
               '<td>' + isRead + '</td>' +
-              '<td><button id="' + emailId + '?preview" onclick="javascript:createPreview(this)">preview</button></td>' +
+              '<td><button class="previewButton" id="' + emailId + '?preview" onclick="javascript:createPreview(this)">preview</button></td>' +
               '<td><button id="' + emailId + '?attachment" onclick="javascript:createAttachmentView(this)">show</button></td>';
 
             $tr.append(td);
@@ -45,11 +47,88 @@ $(function () {
     }
   });
 
-});
+  $('#generateTicket').on('click', function(){
+    var generator = new IDGenerator();
+    var ticket = generator.generate();
+
+    $('#displayTicket').val('#' + ticket);
+
+  });
+
+  createHint();
+
+  $('#generateTicket').trigger('click');
+
+  $('#throwJob').on('click', function(){
+
+    //get subject
+    var ticket = $('#displayTicket').val();
+    var subject = '< Ticket No. ' + $('#displayTicket').val() + ' > ' + $('#commentTitle').val();
+
+    //get recipients
+    var emailArray = $('#consumer').tagsinput('items');
+    var recipients = [];
+
+    //get content
+    var content = $('#commentMessage').val();
+    var title = $('#commentTitle').val();
+    var comment = $('#commentMessage').val();
+
+    //get type
+    var type = 'html';
+
+    //get isEmailAttached
+    var isEmailAttached = $('#withEmail').prop('checked');
+
+    //get reference
+    var reference = '';
+    isEmailAttached ? reference = globalEmailId : reference = '';
+
+    $('#loading-gif').show();
+
+    for (var i in emailArray) {
+      var address = {
+        'address': emailArray[i]['value']
+      }
+      recipients.push(address);
+    }
+
+    $.get('/email/send', {
+      subject: subject,
+      recipients: JSON.stringify(recipients),
+      content: content,
+      type: type,
+    })
+      .done(function (data) {
+
+        $.post("/ticket/insert", {
+          ticket: ticket,
+          recipients: JSON.stringify(recipients),
+          title: title,
+          comment: comment,
+          reference: reference,
+          isEmailAttached: isEmailAttached
+        })
+          .done(function (data) {
+
+            $('#loading-gif').hide();
+            //clear
+            reset();
+            alert('Successully kicked ass!!');
+
+          });
+
+      });
+
+  });
+
+})(jQuery);
 
 //retrieve content
 function createPreview(elem) {
   var emailId = $(elem).attr('id').split('?')[0];
+
+  globalEmailId = emailId;
 
   $.get('/email/getContent', {
       emailId: emailId,
@@ -71,21 +150,70 @@ function createAttachmentView(elem) {
   console.log(emailId)
 }
 
-var names = new Bloodhound({
-  datumTokenizer: Bloodhound.tokenizers.obj.whitespace('text'),
-  queryTokenizer: Bloodhound.tokenizers.whitespace,
-  prefetch: 'data/names.json'
-});
-names.initialize();
+function createHint(){
+  var names = new Bloodhound({
+    datumTokenizer: Bloodhound.tokenizers.obj.whitespace('text'),
+    queryTokenizer: Bloodhound.tokenizers.whitespace,
+    prefetch: 'data/names.json'
+  });
+  names.initialize();
+  
+  var elt = $('#consumer');
+  elt.tagsinput({
+    itemValue: 'value',
+    itemText: 'value',
+    typeaheadjs: {
+      name: 'names',
+      displayKey: 'text',
+      source: names.ttAdapter()
+    }
+  });
 
-var elt = $('#consumer');
-elt.tagsinput({
-  itemValue: 'value',
-  itemText: 'value',
-  typeaheadjs: {
-    name: 'names',
-    displayKey: 'text',
-    source: names.ttAdapter()
+  return true;
+}
+
+function IDGenerator() {
+
+  this.length = 8;
+  this.timestamp = Date.now();
+
+  var _getRandomInt = function (min, max) {
+    return Math.floor(Math.random() * (max - min + 1)) + min;
   }
-});
+
+  this.generate = function () {
+    var ts = this.timestamp.toString();
+    var parts = ts.split("").reverse();
+    var id = "";
+
+    for (var i = 0; i < this.length; ++i) {
+      var index = _getRandomInt(0, parts.length - 1);
+      id += parts[index];
+    }
+
+    var dateString = new Date(this.timestamp)
+    var year = dateString.getFullYear().toString();
+    var month = dateString.getMonth().toString();
+    var day = dateString.getDay().toString();
+    var hours = dateString.getHours().toString();
+
+    var prefix = year + month + day + hours;
+
+    return  prefix + '_' + id;
+  }
+
+
+}
+
+function reset(){
+
+  $('#generateTicket').trigger('click');
+  $('#consumer').tagsinput('removeAll');
+  $('#commentTitle').val('');
+  $('#commentMessage').val('');
+  $('#withEmail').prop('checked', false);
+
+}
+
+
 

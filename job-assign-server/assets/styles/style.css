@@ -1,3 +1,10 @@
+
+textarea {
+  min-height: 165px !important;
+  padding-top: 6px;
+  padding-bottom: 6px;
+}
+
 .pagination {
   height: 36px;
   margin: 0;
@@ -171,11 +178,33 @@
 /* tag input important */
 .bootstrap-tagsinput{
   width: 100% !important;
-  /* padding: 1em 0.5em; */
+  padding: 1em 0.5em;
 }
 
 .bootstrap-tagsinput .tag {
   margin-right: 2px;
   color: white;
   background: #33C3F0;
+  border-radius: 4px;
+  padding: 0.5em;
+  line-height: 2.5em;
 }
+
+.previewButton:active{
+  background: #33C3F0;
+  color: white;
+  border: 1px solid white;
+}
+
+.previewButton:focus{
+  background: #33C3F0;
+  color: white;
+  border: 1px solid white;
+}
+
+.loading-gif{
+  height: 1em;
+  margin-left: 1em;
+}
+
+

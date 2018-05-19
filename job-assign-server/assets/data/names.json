@@ -1,21 +1,31 @@
 [{
-    "value": "test1@gmail.com",
+    "value": "mailjing@gmail.com",
     "text": "Jing Gao",
     "group": "dev"
   },
   {
-    "value": "test2@gmail.com",
+    "value": "ken.littlelion@gmail.com",
     "text": "Ken Cen",
     "group": "dev"
   },
   {
-    "value": "test3@gmail.com",
+    "value": "Cuixy004@gmail.com",
     "text": "Harry Cui",
     "group": "dev"
   },
   {
-    "value": "test4@gmail.com",
+    "value": "max.g.laboratory@gmail.com",
     "text": "Max Gong",
+    "group": "dev"
+  },
+  {
+    "value": "Shihoko.Takahashi@unisa.edu.au",
+    "text": "Shihoko Takahashi",
+    "group": "dev"
+  },
+  {
+    "value": "Saisai.Ma@unisa.edu.au",
+    "text": "Saisai Ma",
     "group": "dev"
   }
 ]

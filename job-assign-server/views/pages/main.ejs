@@ -22,26 +22,31 @@
 
             </div>
             <div class="six columns">
-                <h6>From : <span id='previewFrom'></span></h6>
+                <h6><strong>From : </strong> <span id='previewFrom'></span></h6>
                 <div class="preview container-fuild" id="preview"></div>
                 <br>
                 <div class="row">
                     <div class="six columns">
-                        <label for="exampleEmailInput">Create Ticket</label>
-                        <input class="u-full-width" type="email" placeholder="test@mailbox.com" id="exampleEmailInput">
+                        <label for="exampleEmailInput">Create New Ticket</label>
+                        <input class="u-full-width" type="text" disabled="true" id="displayTicket" />
+                        <button class="button-primary u-full-width" type="button" id="generateTicket">Generate Ticket No.</button>
                     </div>
                     <div class="six columns">
                         <label for="exampleEmailInput">Throw to someone</label>
                         <input id="consumer" type="text" placeholder="whom you want to throw" data-role="tagsinput" />
                     </div>
                 </div>
-                <label for="exampleMessage">Comment</label>
-                <textarea class="u-full-width" placeholder="Hi......" id="exampleMessage"></textarea>
-                <label class="example-send-yourself-copy">
-                    <input type="checkbox">
+
+                <label for="commentTitle">Title</label>
+                <input class="u-full-width" type="text" id="commentTitle" placeholder="Please input tilte" />
+
+                <label for="commentMessage">Comment</label>
+                <textarea class="u-full-width" placeholder="Hi......" id="commentMessage"></textarea>
+                <label class="">
+                    <input type="checkbox" id="withEmail">
                     <span class="label-body">Also attach this email as reference</span>
                 </label>
-                <input class="button-primary" type="submit" value="Throw job">
+                <button class="button-primary" id="throwJob" >Throw job </button><img class="loading-gif" id="loading-gif" src="/images/loading.gif" style="display:none;"></img>
             </div>
         </div>
     </div>

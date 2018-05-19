@@ -154,6 +154,68 @@ module.exports = {
 
         } 
 
+    },
+
+    sendEmail: async function (req, res) {
+
+        const subject = req.query.subject || 'Email from job distribution system';
+        let recipients = req.query.recipients || JSON.stringify([{'address':'max.g.laboratory@gmail.com'}]);
+        const content = req.query.content || '<h1>MicrosoftGraph JavaScript Sample</h1>Check out https://github.com/microsoftgraph/msgraph-sdk-javascript';
+        const contentType = req.query.type || 'html'; 
+
+        const returnObj = await sails.helpers.refreshToken();
+        const token = returnObj['token'];
+
+        const accessToken = token.access_token;
+        const userName = jwt.decode(token.id_token);
+
+        if (accessToken && userName) {
+
+            // Initialize Graph client
+            const client = graph.Client.init({
+                authProvider: (done) => {
+                    done(null, accessToken);
+                }
+            });
+
+            // send message to someone 
+            let message = {
+                subject: subject,
+                toRecipients: [],
+                body: {
+                    content: content,
+                    contentType: contentType
+                }
+            }
+
+            recipients = JSON.parse(recipients);
+
+            for (let i in recipients) {
+
+                let emailAddress = {
+                        emailAddress: {
+                            address: recipients[i]['address']
+                        }
+                    }
+                
+                message.toRecipients.push(emailAddress);
+
+            }
+
+            try {
+                await client
+                    .api('/users/me/sendMail')
+                    .post({ message: message })
+                
+                //todo: write to database
+
+                return res.ok();
+            } catch (error) {
+                console.log(error);
+            }
+
+        }
+
     }
 
 

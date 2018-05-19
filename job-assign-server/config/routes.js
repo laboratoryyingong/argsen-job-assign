@@ -64,8 +64,11 @@ module.exports.routes = {
   'GET /email/get': 'EmailController.getEmail',
   'GET /email/getContent': 'EmailController.getEmailContentById',
   'GET /email/getAttachments': 'EmailController.getAttachmentById',
+  'GET /email/send': 'EmailController.sendEmail',
   
   'GET /auth/get': 'AuthController.getCode',
   'GET /auth/refreshToken': 'AuthController.refreshToken',
+
+  'POST /ticket/insert': 'TicketController.insertTicket',
 
 };
