@@ -33,7 +33,11 @@ var globalEmailId = '';
               '<td>' + receivedDateTime + '</td>' +
               '<td>' + isRead + '</td>' +
               '<td><button class="previewButton" id="' + emailId + '?preview" onclick="javascript:createPreview(this)">preview</button></td>' +
-              '<td><button id="' + emailId + '?attachment" onclick="javascript:createAttachmentView(this)">show</button></td>';
+              '<td><button id="' + emailId + '?attachment" onclick="javascript:createAttachmentView(this)">show</button>' +
+              '<span class="attachmentWrapper">'+
+              '</span>'+
+              '<img class="loading-gif-medium" src="/images/loading.gif" style="display:none;">' +
+              '</td>';
 
             $tr.append(td);
             $('#table-body').append($tr);
@@ -147,7 +151,50 @@ function createPreview(elem) {
 function createAttachmentView(elem) {
   var emailId = $(elem).attr('id').split('?')[0];
 
-  console.log(emailId)
+
+
+  //clear div
+  $(elem).parent().find('.attachmentWrapper').empty();
+
+  $(elem).parent().find('.loading-gif-medium').show();
+
+  $.get('/email/getAttachments', {
+    emailId: emailId,
+  })
+    .done(function (data) {
+
+      var span = $('<span class="attachmentWrapper"></span>');
+
+      for (var i in data) {
+        var button = '<button class="attachmentTitle button-primary" emailId="' + emailId + '" contentId = "' + data[i]['contentId'] + '">' + data[i]['name'] + '</button>';
+        span.append(button);
+      }
+
+      $(elem).parent().append(span);
+
+      $('.attachmentTitle ').off('click');
+
+      $('.attachmentTitle').on('click', function () {
+
+        var contentId = $(this).attr('contentId');
+        var emailId = $(this).attr('emailId');
+
+
+        $.get('/email/attachment', {contentId:contentId, emailId:emailId})
+         .done(function(data){
+
+            var sampleArr = base64ToArrayBuffer(data.contentBytes);
+            saveByteArray(data.name, sampleArr);
+
+         });
+
+      });
+
+      $(elem).parent().find('.loading-gif-medium').hide();
+
+    })
+
+  
 }
 
 function createHint(){
@@ -214,6 +261,26 @@ function reset(){
   $('#withEmail').prop('checked', false);
 
 }
+
+function base64ToArrayBuffer(base64) {
+  var binaryString = window.atob(base64);
+  var binaryLen = binaryString.length;
+  var bytes = new Uint8Array(binaryLen);
+  for (var i = 0; i < binaryLen; i++) {
+    var ascii = binaryString.charCodeAt(i);
+    bytes[i] = ascii;
+  }
+  return bytes;
+}
+
+function saveByteArray(reportName, byte) {
+  var blob = new Blob([byte]);
+  var link = document.createElement('a');
+  link.href = window.URL.createObjectURL(blob);
+  var fileName = reportName;
+  link.download = fileName;
+  link.click();
+};
 
 
 

@@ -113,7 +113,7 @@ module.exports = {
         return res.json(emailConent);
     },
 
-    getAttachmentById: async function (req, res){
+    getAttachmentListByEmailId: async function (req, res){
         const emailId = req.query.emailId;
 
         let returnObj = await sails.helpers.refreshToken();
@@ -139,7 +139,7 @@ module.exports = {
             for(let i in attachments['value']){
                 let name = attachments['value'][i]['name'];
                 let size = attachments['value'][i]['size'];
-                let contentId =  attachments['value'][i]['contentId'];
+                let contentId =  attachments['value'][i]['id'];
 
                 let temp = {
                     name:name,
@@ -154,6 +154,33 @@ module.exports = {
 
         } 
 
+    },
+
+    getAttachmentByContentId: async function (req, res){
+        const emailId = req.query.emailId;
+        const contentId = req.query.contentId;
+
+        let returnObj = await sails.helpers.refreshToken();
+        let token = returnObj['token'];
+
+        let accessToken = token.access_token;
+        let userName = jwt.decode(token.id_token);
+
+        if (accessToken && userName) {
+
+            // Initialize Graph client
+            let client = graph.Client.init({
+                authProvider: (done) => {
+                    done(null, accessToken);
+                }
+            });
+
+            let attachment = await client
+                .api('/me/messages/' + emailId + '/attachments/' + contentId)
+                .get();
+            
+            return res.json(attachment);
+        }
     },
 
     sendEmail: async function (req, res) {
@@ -216,8 +243,7 @@ module.exports = {
 
         }
 
-    }
-
+    },
 
 };
 

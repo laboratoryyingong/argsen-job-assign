@@ -207,4 +207,13 @@ textarea {
   margin-left: 1em;
 }
 
+.loading-gif-medium{
+  height: 2em;
+  margin-left: 2em;
+}
+
+.attachmentTitle{
+  font-size: 0.7em;
+}
+
 
