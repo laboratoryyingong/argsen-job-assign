@@ -23,15 +23,21 @@ module.exports.routes = {
   * `assets` directory)                                                      *
   *                                                                          *
   ***************************************************************************/
-  '/': {
-    controller: 'pages',
-    action: 'main'
-  },
+ '/': {
+   controller: 'pages',
+   action: 'index'
+ },
 
-  '/authorise': {
-    controller: 'pages',
-    action: 'authorise'
-  },
+ '/main': {
+   controller: 'pages',
+   action: 'main'
+ },
+
+ '/authorise': {
+   controller: 'pages',
+   action: 'authorise'
+ },
+
 
   /***************************************************************************
   *                                                                          *
@@ -71,5 +77,6 @@ module.exports.routes = {
   'GET /auth/refreshToken': 'AuthController.refreshToken',
 
   'POST /ticket/insert': 'TicketController.insertTicket',
+  'POST /user/send': 'UserlogController.sendUserLog',
 
 };

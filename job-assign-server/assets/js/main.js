@@ -2,133 +2,151 @@ var globalEmailId = '';
 
 (function ($) {
 
-  $('#pagination-demo').twbsPagination({
-    totalPages: 10,
-    visiblePages: 5,
-    first: '<i class="fas fa-step-backward"></i>',
-    prev: '<i class="fas fa-chevron-left"></i>',
-    next: '<i class="fas fa-chevron-right"></i>',
-    last: '<i class="fas fa-step-forward"></i>',
-    onPageClick: function (event, page) {
-      var limit = 5;
-      var skip = (parseInt(page) - 1) * limit;
+  init();
 
-      $.get("/email/get", {
-          limit: limit,
-          skip: skip
-        })
-        .done(function (data) {
+  $.get('/email/receive')
+    .done(function () {
 
-          $('#table-body').empty();
+      $('#pagination-demo').twbsPagination({
+        totalPages: 10,
+        visiblePages: 5,
+        first: '<i class="fas fa-step-backward"></i>',
+        prev: '<i class="fas fa-chevron-left"></i>',
+        next: '<i class="fas fa-chevron-right"></i>',
+        last: '<i class="fas fa-step-forward"></i>',
+        onPageClick: function (event, page) {
+          var limit = 5;
+          var skip = (parseInt(page) - 1) * limit;
 
-          for (var i in data) {
+          $.get("/email/get", {
+              limit: limit,
+              skip: skip
+            })
+            .done(function (data) {
 
-            var $tr = $('<tr></tr>');
-            var subject = data[i].subject;
-            var receivedDateTime = data[i].receivedDateTime;
-            var isRead = data[i].isRead === true ? "YES" : "NO";
-            var emailId = data[i].emailId;
+              $('#table-body').empty();
 
-            var td = '<td>' + subject + '</td>' +
-              '<td>' + receivedDateTime + '</td>' +
-              '<td>' + isRead + '</td>' +
-              '<td><button class="previewButton" id="' + emailId + '?preview" onclick="javascript:createPreview(this)">preview</button></td>' +
-              '<td><button id="' + emailId + '?attachment" onclick="javascript:createAttachmentView(this)">show</button>' +
-              '<span class="attachmentWrapper">'+
-              '</span>'+
-              '<img class="loading-gif-medium" src="/images/loading.gif" style="display:none;">' +
-              '</td>';
+              for (var i in data) {
 
-            $tr.append(td);
-            $('#table-body').append($tr);
+                var $tr = $('<tr></tr>');
+                var subject = data[i].subject;
+                var receivedDateTime = data[i].receivedDateTime;
+                var isRead = data[i].isRead === true ? "YES" : "NO";
+                var emailId = data[i].emailId;
+
+                var td = '<td>' + subject + '</td>' +
+                  '<td>' + receivedDateTime + '</td>' +
+                  '<td>' + isRead + '</td>' +
+                  '<td><button class="previewButton" id="' + emailId + '?preview" onclick="javascript:createPreview(this)">preview</button></td>' +
+                  '<td><button id="' + emailId + '?attachment" onclick="javascript:createAttachmentView(this)">show</button>' +
+                  '<span class="attachmentWrapper">' +
+                  '</span>' +
+                  '<img class="loading-gif-medium" src="/images/loading.gif" style="display:none;">' +
+                  '</td>';
+
+                $tr.append(td);
+                $('#table-body').append($tr);
+              }
+
+
+
+
+            });
+
+        }
+      });
+
+      $('#generateTicket').on('click', function () {
+        var generator = new IDGenerator();
+        var ticket = generator.generate();
+
+        $('#displayTicket').val('#' + ticket);
+
+      });
+
+      $('#generateTicket').trigger('click');
+
+      $('#withEmail').on('change', function () {
+        var is_checked = $(this).prop('checked');
+
+        if (is_checked && $('#preview').children().length > 0) {
+
+        } else {
+          alert('Please choose email which you want to attach, thanks!')
+        }
+      });
+
+      $('#throwJob').on('click', function () {
+
+        //get subject
+        var ticket = $('#displayTicket').val();
+        var subject = '< Ticket No. ' + $('#displayTicket').val() + ' > ' + $('#commentTitle').val();
+
+        //get recipients
+        var emailArray = $('#consumer').tagsinput('items');
+        var recipients = [];
+
+        //get content
+        var content = $('#commentMessage').val();
+        var title = $('#commentTitle').val();
+        var comment = $('#commentMessage').val();
+        var preview = $('#preview').prop('outerHTML');
+
+        //get type
+        var type = 'html';
+
+        //get isEmailAttached
+        var isEmailAttached = $('#withEmail').prop('checked');
+
+        //get reference
+        var reference = '';
+        isEmailAttached ? reference = globalEmailId : reference = '';
+        isEmailAttached ? content = '<p>' + content + '</p><br>' + preview : '<p>' + content + '</p><br>';
+
+        $('#loading-gif').show();
+
+        for (var i in emailArray) {
+          var address = {
+            'address': emailArray[i]['value']
           }
+          recipients.push(address);
+        }
 
-
-
-
-        });
-
-    }
-  });
-
-  $('#generateTicket').on('click', function(){
-    var generator = new IDGenerator();
-    var ticket = generator.generate();
-
-    $('#displayTicket').val('#' + ticket);
-
-  });
-
-  createHint();
-
-  $('#generateTicket').trigger('click');
-
-  $('#throwJob').on('click', function(){
-
-    //get subject
-    var ticket = $('#displayTicket').val();
-    var subject = '< Ticket No. ' + $('#displayTicket').val() + ' > ' + $('#commentTitle').val();
-
-    //get recipients
-    var emailArray = $('#consumer').tagsinput('items');
-    var recipients = [];
-
-    //get content
-    var content = $('#commentMessage').val();
-    var title = $('#commentTitle').val();
-    var comment = $('#commentMessage').val();
-
-    //get type
-    var type = 'html';
-
-    //get isEmailAttached
-    var isEmailAttached = $('#withEmail').prop('checked');
-
-    //get reference
-    var reference = '';
-    isEmailAttached ? reference = globalEmailId : reference = '';
-
-    $('#loading-gif').show();
-
-    for (var i in emailArray) {
-      var address = {
-        'address': emailArray[i]['value']
-      }
-      recipients.push(address);
-    }
-
-    $.get('/email/send', {
-      subject: subject,
-      recipients: JSON.stringify(recipients),
-      content: content,
-      type: type,
-    })
-      .done(function (data) {
-
-        $.post("/ticket/insert", {
-          ticket: ticket,
-          recipients: JSON.stringify(recipients),
-          title: title,
-          comment: comment,
-          reference: reference,
-          isEmailAttached: isEmailAttached
-        })
+        $.get('/email/send', {
+            subject: subject,
+            recipients: JSON.stringify(recipients),
+            content: content,
+            type: type,
+          })
           .done(function (data) {
 
-            $('#loading-gif').hide();
-            //clear
-            reset();
-            alert('Successully kicked ass!!');
+            $.post("/ticket/insert", {
+                ticket: ticket,
+                recipients: JSON.stringify(recipients),
+                title: title,
+                comment: comment,
+                reference: reference,
+                isEmailAttached: isEmailAttached
+              })
+              .done(function (data) {
+
+                $('#loading-gif').hide();
+                //clear
+                reset();
+                alert('Successully kicked ass!!');
+
+              });
 
           });
 
       });
 
-  });
+    });
+
+  createHint();
 
 })(jQuery);
 
-//retrieve content
 function createPreview(elem) {
   var emailId = $(elem).attr('id').split('?')[0];
 
@@ -280,7 +298,54 @@ function saveByteArray(reportName, byte) {
   var fileName = reportName;
   link.download = fileName;
   link.click();
-};
+}
+
+function init() {
+
+  $window = $(window);
+  $popoverLink = $('[data-popover]');
+  $document = $(document);
+
+  $window.on('scroll', onScroll);
+  $window.on('resize', resize);
+  $popoverLink.on('click', openPopover);
+  $document.on('click', closePopover);
+}
+
+function openPopover(e) {
+  e.preventDefault()
+  closePopover();
+  var popover = $($(this).data('popover'));
+  popover.toggleClass('open')
+  e.stopImmediatePropagation();
+}
+
+function closePopover(e) {
+  if($('.popover.open').length > 0) {
+    $('.popover').removeClass('open')
+  }
+}
+
+function resize() {
+  $body.removeClass('has-docked-nav')
+  navOffsetTop = $nav.offset().top
+  onScroll()
+}
+
+function onScroll() {
+  if(navOffsetTop < $window.scrollTop() && !$body.hasClass('has-docked-nav')) {
+    $body.addClass('has-docked-nav')
+  }
+  if(navOffsetTop > $window.scrollTop() && $body.hasClass('has-docked-nav')) {
+    $body.removeClass('has-docked-nav')
+  }
+}
+
+function escapeHtml(string) {
+  return String(string).replace(/[&<>"'\/]/g, function (s) {
+    return entityMap[s];
+  });
+}
 
 
 

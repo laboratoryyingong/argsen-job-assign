@@ -37,6 +37,10 @@ module.exports = {
         res.view('pages/main', {layout: 'layouts/layout'})
     },
 
+    index: function (req, res){
+        res.view('pages/index', {layout: 'layouts/layout'})
+    },
+
   
 
 };

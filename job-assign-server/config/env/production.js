@@ -59,6 +59,9 @@ module.exports = {
       //  ```
       //--------------------------------------------------------------------------
 
+      adapter: 'sails-mongo',
+      url: 'mongodb://localhost:27017/argsen-job-assign',
+
       /****************************************************************************
       *                                                                           *
       * More adapter-specific options                                             *
@@ -250,10 +253,9 @@ module.exports = {
     * > Be sure to use the right protocol!  ("http://" vs. "https://")         *
     *                                                                          *
     ***************************************************************************/
-    // onlyAllowOrigins: [
-    //   'https://example.com',
-    //   'https://staging.example.com',
-    // ],
+    onlyAllowOrigins: [
+      'https://www.argsen.com'
+    ],
 
 
     /***************************************************************************
@@ -337,7 +339,7 @@ module.exports = {
   * this, just try deploying without setting it and see if it works.)       *
   *                                                                         *
   ***************************************************************************/
-  // port: 80,
+  port: 80,
 
 
 
@@ -371,8 +373,8 @@ module.exports = {
   *                                                                         *
   ***************************************************************************/
   custom: {
-    baseUrl: 'https://example.com',
-    internalEmailAddress: 'support@example.com',
+    baseUrl: 'http://www.argsen.com',
+    internalEmailAddress: 'contact@argson.com',
 
     // mailgunDomain: 'mg.example.com',
     // mailgunSecret: 'key-prod_fake_bd32301385130a0bafe030c',
